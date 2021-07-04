@@ -1,34 +1,29 @@
-html {
-    font-size: 10px;
-    font-family: 'Noto Sans SC', sans-serif;
-    background-color: #e6e6e6;
-}
-
 body {
-    width: 60%;
-    margin: 50px auto;
-    background-color: white;
-    padding: 0 20px 20px 20px;
-    border-radius: 2px;
+    font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
+    font-size: 21px;
 }
 
-h1 {
-    font-size: 60px;
-    text-align: center;
-    margin: 0;
-    padding: 20px 0;
-    color: #00539F;
-    text-shadow: 3px 3px 1px black;
+div.article-list {
+    margin: 5% 10% 5% 10%;
 }
 
-p,
-li {
-    font-size: 16px;
-    line-height: 2;
-    letter-spacing: 1px;
+div.date {
+    display: inline-block;
+    font-size: 20px;
+    color: darkgrey;
 }
 
-img {
+.title {
+    cursor: pointer;
+    padding: 15px 20px;
+}
+
+.title a {
     display: block;
-    margin: 0 auto;
+    font-size: 25px;
+}
+
+li.title:hover {
+    background-color: #eee;
+    font-size: 100%;
 }
