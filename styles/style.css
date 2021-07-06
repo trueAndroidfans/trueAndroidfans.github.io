@@ -1,10 +1,9 @@
 body {
     font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
-    font-size: 21px;
 }
 
 div.article-list {
-    margin: 5% 10% 5% 10%;
+    margin: 100px 10%;
 }
 
 div.date {
@@ -15,12 +14,17 @@ div.date {
 
 .title {
     cursor: pointer;
-    padding: 15px 20px;
+    padding: 20px;
 }
 
 .title a {
     display: block;
     font-size: 25px;
+}
+
+.title span {
+    margin-left: 10px;
+    font-size: 10px;
 }
 
 li.title:hover {
