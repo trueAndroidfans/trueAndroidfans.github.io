@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Jetpack - Lifecycles</title>
+
+    <link href="/images/favicon.ico" rel="shortcut icon">
+    <link href="/styles/article.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="article">
+        <h2 class="title">Jetpack - Lifecycles</h2>
+        <p>Lifecycles 是视图控制器的生命周期感知组件。</p>
+        <p>它可以让任何一个类都能轻松感知到视图控制器的生命周期，同时又不需要在视图控制器中编写大量的逻辑处理。</p>
+        <h3 class="title">注解</h3>
+        <p>在方法上添加 @OnLifecycleEvent 注解，并传入一种生命周期事件，这样当视图控制器对应的生命周期方法触发的时候被注解的方法就会得到执行。</p>
+        <p>我们通过一个简单示例来直观的感受一下 Lifecycles 的基本用法。新建一个 MyObserver 类，并实现 LifecycleObserver 接口：</p>
+        <pre>
+        class MyObserver : LifecycleObserver
+        {
+        }
+        </pre>
+        <p>接着，在 MyObserver 中定义 onStart 方法用于用于观察视图控制器的生命周期变化：</p>
+        <pre>
+        class MyObserver : LifecycleObserver
+        {
+            @OnLifecycleEvent(Lifecycle.Event.ON_START)
+            fun onStart()
+            {
+                Log.d("MyObserver", "onStart")
+            }
+        }
+        </pre>
+        <pre>
+        class MainActivity : AppCompatActivity()
+        {
+            override fun onCreate(savedInstanceState: Bundle?)
+            {
+                lifecycle.addObserver(MyObserver())
+            }
+        }
+        </pre>
+        <p>这样，当视图控制器的 onStart 方法被触发时，MyObserver 中的 onStart 就会得到执行。</p>
+        <h3 class="title">主动获知生命周期状态</h3>
+        <p>为了主动获知当前的生命周期状态，我们需要在类的构造函数中将 Lifecycle 对象传进来即可，有了 Lifecycle 对象之后，就可以调用 lifecycle.currentState 来主动获知当前的生命周期状态。</p>
+        <pre>
+        class MyObserver(val lifecycle: Lifecycle) : LifecycleObserver
+        {
+        }
+        </pre>
+        <p>lifecycle.currentState 返回的值与视图控制器生命周期的关系如下图：</p>
+        <img src="/images/lifecycle.webp" class="img-responsive" alt="Responsive image">
+        <p>到这里，我们就掌握了 Lifecycle 的基本用法。</p>
+    </div>
+</body>
+
+</html>
