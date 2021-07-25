@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Jetpack - LiveData</title>
+
+    <link href="/images/favicon.ico" rel="shortcut icon">
+    <link href="/styles/article.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="article">
+        <h2 class="title">Jetpack - LiveData</h2>
+        <p>LiveData 是一种响应式编程组件。</p>
+        <p>它可以包含任何类型的数据，并在数据发生变化的时候通知给观察者。</p>
+        <h3 class="title">设置数据</h3>
+        <p>如果你需要在子线程中给 LiveData 设置数据，一定要调用 postValue() 方法，而不能使用 setValue() 方法，否则会发生崩溃。结合前面的 ViewModel 组件，我们通过一个示例来直观的感受一下 LiveData 的基本用法。在 MainViewModel 中声明一个 Int 类型的 LiveData 数据：</p>
+        <pre>
+        class MainViewModel(countReserved: Int) : ViewModel()
+        {
+            private val counter = MutableLiveData&lt;Int&gt;()
+
+            fun plusOne()
+            {
+                val count = counter.value ?: 0
+                counter.value = count
+            }
+        }
+        </pre>
+        <p>其中，counter.value = count 实际是调用 setValue() 方法。接着，我们在 Activity 中对 counter 进行观察：</p>
+        <pre>
+        viewModel.counter.observe(this, {
+            // do something
+        })
+        </pre>
+        <h3 class="title">转换</h3>
+        <p>如果 LiveData 对象是调用另外的方法获取的，那么我们就可以借助 SwitchMap() 方法将这个 LiveData 对象转换成另一个可观察的 LiveData 对象：</p>
+        <pre>
+        private val userIdLiveData = MutableLiveData&lt;String&gt;()
+
+        val user: LiveData&lt;User&gt; = Transformations.switchMap(userIdLiveData) {
+            Repository.getUser(it)
+        }
+            
+        fun getUser(userId: String)
+        {
+            userIdLiveData.value = userId
+        }
+        </pre>
+        <p>其中,Repository.getUser(it) 返回一个不可观察的 LiveData 对象，经过 switchMap() 方法的转换dedaoyige可观察的 LiveData 对象 user。</p>
+        <h3 class="title">数据变化</h3>
+        <p>如果在视图控制器处于不可见状态的时候，如果 LiveData 发生了多次数据变化，是不会通知给观察者的，只有当视图控制器重新恢复可见状态时，才会将最新的那份数据通知给观察者。</p>
+        <p>至此，我们就掌握了 LiveData 的基本特性。</p>
+    </div>
+</body>
+
+</html>
