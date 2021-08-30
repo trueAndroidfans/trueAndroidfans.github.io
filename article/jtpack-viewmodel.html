@@ -26,24 +26,67 @@
         <img src="/images/viewmodel-lifecycle.png" class="img-responsive" alt="Responsive image">
         <p>我们通过一个简单的计数器示例来直观的感受一下 ViewModel 的生命周期（示例来自《第一行代码》）。</p>
         <p>通常来讲，一个视图控制器有一个与之对应的 ViewModel ,现有视图控制器 MainActivity ，那么与之对应的 ViewModel 如下：</p>
-        <img src="/images/viewmodel-1.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        class MainViewModel() : ViewModel()
+        {
+        }
+        </pre>
         <p>接着，在 MainViewModel 中声明一个变量 counter 用于计数：</p>
-        <img src="/images/viewmodel-2.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        class MainViewModel() : ViewModel()
+        {
+            var coonter = 0
+        }
+        </pre>
         <p>在 MainActivity 中实例化 MainViewModel ，注意，这里不可以直接调用构造函数去实例化 ViewModel ，而是要通过 ViewModelProvider 去获取 ViewModel 的示例：</p>
-        <img src="/images/viewmodel-3.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        class MainActivity : AppCompatActivity()
+        {
+            
+            private lateinit var viewModel: MainViewModel
+
+            override fun onCreate(savedInstanceState: Bundle?)
+            {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+                viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+            }
+        }
+        </pre>
         <p>之所以要这么写，是因为 ViewModel 有其独立的生命周期，并且要长于 Activity ，如果每次在 onCreate 方法中通过调用构造函数去实例化 ViewModel ,那么在 Activity 销毁并重建的时候就会生成一个新的 ViewModel 实例，这样就无法在 Activity 销毁并重建的时候保留相关的数据。</p>
         <p>通过点击 plusOneBtn 让计数器增长，并将增长后的结果展示在 infoText 上：</p>
-        <img src="/images/viewmodel-4.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        plusOneBtn.setOnClickListener {
+            viewModel.counter++
+            infoText.text = viewModel.counter.toString()
+        }
+        </pre>
         <p>最终，当你点击几次按钮后发现结果正和你期望的一样，如果此时你旋转手机的屏幕，会发现 infoText 上的计数并没有丢失，从而验证了 ViewModel 的生命周期不同于视图控制器的特点。</p>
         <h3 class="title">构造函数</h3>
         <p>根据上文的警告，我们并不能通过构造函数去实例化 ViewModel,那如果确实需要通过构造函数传递参数，该怎么办呢？只需要使用 ViewModelProvider.Factory 就可以实现了。</p>
         <p>首先给 ViewModel 的构造函数添加一个参数：</p>
-        <img src="/images/viewmodel-5.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        class MainViewModel(counterParam:Int) : ViewModel()
+        {
+            var counter = counterParam
+        }
+        </pre>
         <p>接着新建一个 MainViewModelFactory 类：</p>
-        <img src="/images/viewmodel-6.png" class="img-responsive" alt="Responsive image">
+        <pre>
+        class MainViewModelFactory(private val countParam: Int) : ViewModelProvider.Factory
+        {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T
+            {
+                return MainViewModel(countParam) as T
+            }
+        }
+        </pre>
         <p>同时给 MainViewModelFactory 类的构造函数也添加一个参数，在待实现的 create 的方法中实例化 MainViewModel ，并将参数传递给 MainViewModel ，由于 create 方法的执行时机与视图控制器的生命周期无关，所以此处可以通过构造函数实例化 ViewModel 。</p>
         <p>最后在 MainActivity 修改获取 ViewModel 实例的方法：</p>
-        <img src="/images/viewmodel-7.png" class="img-responsive" alt="Responsive image">
+        <pre>
+            val countReserved = 0 
+            viewModel = ViewModelProvider(this, MainViewModelFactory(countReserved)).get(MainViewModel::class.java)
+        </pre>
         <p>这样，就可以实现通过构造函数向 ViewModel 传递参数了。</p>
     </div>
 </body>
